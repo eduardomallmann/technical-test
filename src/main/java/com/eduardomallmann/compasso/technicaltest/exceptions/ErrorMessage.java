@@ -1,4 +1,4 @@
-package com.verint.suntech.adint.customer.commons.exception;
+package com.eduardomallmann.compasso.technicaltest.exceptions;
 
 import com.verint.suntech.adint.customer.commons.builder.Builder;
 
@@ -10,12 +10,10 @@ import java.util.Objects;
 /**
  * Class responsible for the encapsulation of the error messages sent by the application.
  *
- * @author emallmann
+ * @author eduardomallmann
  * @since 0.0.1
  */
-public class ErrorMessage implements Serializable {
-
-    private static final long serialVersionUID = -362870301005498223L;
+public class ErrorMessage {
 
     private int status;
     private String message;
