@@ -19,15 +19,15 @@ import java.util.Objects;
  */
 @Entity
 @Table(name = "cities",
-        uniqueConstraints=@UniqueConstraint(name = "uq_cities_name_state", columnNames={"name", "state"})
+        uniqueConstraints=@UniqueConstraint(name = "uc_cities_name_state", columnNames={"name", "state"})
 )
 public class City implements Serializable {
 
     private static final long serialVersionUID = -3557055890514081553L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "city_seq")
-    @SequenceGenerator(name = "city_seq", sequenceName = "city_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "cities_seq")
+    @SequenceGenerator(name = "cities_seq", sequenceName = "cities_id_seq", allocationSize = 1)
     private Long id;
     @Column(name = "name", nullable = false)
     private String name;
