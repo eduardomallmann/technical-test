@@ -1,4 +1,6 @@
-package com.eduardomallmann.compasso.technicaltest.util;
+package com.eduardomallmann.compasso.technicaltest.utils;
+
+import com.eduardomallmann.compasso.technicaltest.exceptions.ErrorMessage;
 
 /**
  * Class responsible to encapsulate the content of empty body and errors.

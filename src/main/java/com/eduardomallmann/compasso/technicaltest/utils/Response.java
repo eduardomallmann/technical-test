@@ -1,4 +1,4 @@
-package com.eduardomallmann.compasso.technicaltest.util;
+package com.eduardomallmann.compasso.technicaltest.utils;
 
 import org.springframework.data.domain.Page;
 

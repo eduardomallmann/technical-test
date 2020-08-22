@@ -1,4 +1,4 @@
-package com.eduardomallmann.compasso.technicaltest.domain.city;
+package com.eduardomallmann.compasso.technicaltest.domains.city;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

@@ -1,4 +1,4 @@
-package com.eduardomallmann.compasso.technicaltest.util;
+package com.eduardomallmann.compasso.technicaltest.utils;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
