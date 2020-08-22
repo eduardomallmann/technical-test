@@ -1,4 +1,4 @@
-package com.eduardomallmann.compasso.technicaltest.domain.city;
+package com.eduardomallmann.compasso.technicaltest.domains.city;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

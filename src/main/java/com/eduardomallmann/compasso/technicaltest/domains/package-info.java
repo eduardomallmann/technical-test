@@ -1,4 +1,4 @@
 /**
  * Package responsible to keep the project domain classes.
  */
-package com.eduardomallmann.compasso.technicaltest.domain;
+package com.eduardomallmann.compasso.technicaltest.domains;
