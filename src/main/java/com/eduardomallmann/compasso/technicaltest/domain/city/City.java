@@ -7,6 +7,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -17,7 +18,9 @@ import java.util.Objects;
  * @since 0.0.1
  */
 @Entity
-@Table(name = "cities")
+@Table(name = "cities",
+        uniqueConstraints=@UniqueConstraint(name = "uq_cities_name_state", columnNames={"name", "state"})
+)
 public class City implements Serializable {
 
     private static final long serialVersionUID = -3557055890514081553L;
