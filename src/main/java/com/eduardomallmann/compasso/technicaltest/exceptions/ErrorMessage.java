@@ -1,6 +1,7 @@
 package com.eduardomallmann.compasso.technicaltest.exceptions;
 
 import com.eduardomallmann.compasso.technicaltest.utils.Builder;
+import com.eduardomallmann.compasso.technicaltest.utils.MessageUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +24,7 @@ public class ErrorMessage {
 
     public ErrorMessage(final int status, final String message, final List<String> errors) {
         this.status = status;
-        this.message = message;
+        this.message = MessageUtils.getMessage(message);
         this.errors = errors;
     }
 
@@ -45,7 +46,7 @@ public class ErrorMessage {
         }
 
         public ErrorMessageBuilder message(final String message) {
-            this.builder.with(r -> r.message = message);
+            this.builder.with(r -> r.message = MessageUtils.getMessage(message));
             return this;
         }
 
