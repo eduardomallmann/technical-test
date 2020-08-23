@@ -80,19 +80,21 @@ public class CityDTO {
         StringBuilder normalizeField = new StringBuilder();
         for (int i = 0; i < words.length; i++) {
             String word = words[i];
-            if (i == 0 || i == words.length - 1) {
+            if (i == 0) {
                 normalizeField
                         .append(word.substring(0, 1).toUpperCase())
                         .append(word.substring(1).toLowerCase());
-            } else if (word.length() >= 3) {
-                normalizeField
-                        .append(" ")
-                        .append(word.toLowerCase());
             } else {
-                normalizeField
-                        .append(" ")
-                        .append(word.substring(0, 1).toUpperCase())
-                        .append(word.substring(1).toLowerCase());
+                if (word.length() <= 3 && word.toLowerCase().startsWith("d") && i != words.length -1) {
+                    normalizeField
+                            .append(" ")
+                            .append(word.toLowerCase());
+                } else {
+                    normalizeField
+                            .append(" ")
+                            .append(word.substring(0, 1).toUpperCase())
+                            .append(word.substring(1).toLowerCase());
+                }
             }
         }
         return normalizeField.toString();
