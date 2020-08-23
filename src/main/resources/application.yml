@@ -1,1 +1,69 @@
+info:
+  app:
+    name: @name@
+    description: @description@
+    version: @version@
 
+server:
+  port: ${SERVER_PORT:8080}
+
+spring:
+  jackson:
+    serialization:
+      INDENT_OUTPUT: true
+  datasource:
+    url: jdbc:h2:mem:technicaltest;DB_CLOSE_DELAY=-1
+    username: sa
+    password: pass
+    driverClassName: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        temp:
+          use_jdbc_metadata_defaults: false
+        jdbc:
+          lob:
+            non_contextual_creation: true
+        dialect: org.hibernate.dialect.H2Dialect
+        use_sql_comments: true
+        format_sql: true
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        trace: false
+        web-allow-others: false
+
+management:
+  endpoint:
+    health:
+      show-details: always
+    shutdown:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  metrics:
+    export:
+      prometheus:
+        step: 15s
+        descriptions: true
+        enabled: true
+
+logging:
+  level:
+    com.eduardomallmann.compasso.technicaltest: ${LOGGING_LEVEL:debug}
+    org:
+      springframework:
+        data:
+          jpa: ${LOGGING_LEVEL:debug}
+          core: ${LOGGING_LEVEL:debug}
+  pattern:
+    file: '%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%5p) %clr(${PID}){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n%wEx'
+  file:
+    name: ./@name@.log
+    path: ./logs
