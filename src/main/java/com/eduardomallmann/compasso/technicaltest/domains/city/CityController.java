@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.async.DeferredResult;
 
+import javax.validation.Valid;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -44,7 +45,7 @@ public class CityController {
      * @throws CityException in case of the application throws any kind of exception.
      */
     @PostMapping
-    public DeferredResult<ResponseEntity<Response<CityDTO>>> createCity(@RequestBody CityDTO cityRequest) throws CityException {
+    public DeferredResult<ResponseEntity<Response<CityDTO>>> createCity(@Valid @RequestBody CityDTO cityRequest) throws CityException {
         DeferredResult<ResponseEntity<Response<CityDTO>>> deferredResult = new DeferredResult<>();
         CompletableFuture<Response<CityDTO>> future = this.cityService.save(cityRequest);
         future.whenCompleteAsync((result, throwable) -> deferredResult.setResult(ResponseEntity.status(HttpStatus.CREATED).body(result)));

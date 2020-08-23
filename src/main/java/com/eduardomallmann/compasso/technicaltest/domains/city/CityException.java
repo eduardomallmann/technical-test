@@ -28,7 +28,7 @@ public class CityException extends Exception {
                                     .build();
     }
 
-    private ErrorMessage getErrorMessage() {
+    public ErrorMessage getErrorMessage() {
         return this.errorMessage;
     }
 }
