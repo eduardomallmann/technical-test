@@ -19,42 +19,94 @@ public class ErrorMessage {
     private String message;
     private List<String> errors;
 
+    /**
+     * Main constructor, empty.
+     */
     public ErrorMessage() {
     }
 
+    /**
+     * Optional constructor with all fields.
+     *
+     * @param status  error status code
+     * @param message key message for error
+     * @param errors  list of related errors
+     */
     public ErrorMessage(final int status, final String message, final List<String> errors) {
         this.status = status;
         this.message = MessageUtils.getMessage(message);
         this.errors = errors;
     }
 
+    /**
+     * ErrorMessage builder instantiation.
+     *
+     * @return {@link ErrorMessageBuilder} object.
+     */
     public static ErrorMessageBuilder builder() {
         return new ErrorMessageBuilder();
     }
 
+    /**
+     * Builder pattern implementation on {@link ErrorMessage} class.
+     *
+     * @author eduardomallmann
+     * @since 0.0.1
+     */
     public static class ErrorMessageBuilder {
 
-        private Builder<ErrorMessage> builder;
+        private final Builder<ErrorMessage> builder;
 
+        /**
+         * Main constructor, empty.
+         */
         public ErrorMessageBuilder() {
             this.builder = Builder.create(ErrorMessage.class);
         }
 
+        /**
+         * Sets the {@link ErrorMessage#status} property.
+         *
+         * @param status value to be placed
+         *
+         * @return the {@link ErrorMessageBuilder}.
+         */
         public ErrorMessageBuilder status(final int status) {
             this.builder.with(r -> r.status = status);
             return this;
         }
 
+        /**
+         * Sets the {@link ErrorMessage#message} property.
+         *
+         * @param message value to be placed
+         *
+         * @return the {@link ErrorMessageBuilder}.
+         */
         public ErrorMessageBuilder message(final String message) {
             this.builder.with(r -> r.message = MessageUtils.getMessage(message));
             return this;
         }
 
+        /**
+         * Sets the {@link ErrorMessage#errors} list property.
+         *
+         * @param errors values to be placed
+         *
+         * @return the {@link ErrorMessageBuilder}.
+         */
         public ErrorMessageBuilder errors(final List<String> errors) {
             this.builder.with(r -> r.errors = errors);
             return this;
         }
 
+        /**
+         * Adds a value to the {@link ErrorMessage#errors} list property.
+         *
+         * @param error value to be placed
+         *
+         * @return the {@link ErrorMessageBuilder}.
+         */
         public ErrorMessageBuilder errors(final String error) {
             this.builder.with(r -> {
                 if (r.errors == null) {
@@ -65,6 +117,11 @@ public class ErrorMessage {
             return this;
         }
 
+        /**
+         * Instantiate the object built.
+         *
+         * @return an {@link ErrorMessage} object.
+         */
         public ErrorMessage build() {
             return builder.build();
         }
