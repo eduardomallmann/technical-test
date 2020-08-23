@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Interface that defines the calls of {@link City} to cities table in the database.
@@ -33,4 +34,14 @@ public interface CityRepository extends JpaRepository<City, Long> {
      * @return A list of {@link City} objects.
      */
     List<City> findAllByState(final String state);
+
+    /**
+     * Find a {@link City} register by its name and state.
+     *
+     * @param name  full name of the city
+     * @param state full state name
+     *
+     * @return a {@link City} object.
+     */
+    Optional<City> findByNameAndState(final String name, final String state);
 }

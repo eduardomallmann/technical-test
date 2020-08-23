@@ -35,7 +35,7 @@ public class City implements Serializable {
     private String state;
 
     /**
-     * Main empty constructor.
+     * Main constructor, empty.
      */
     public City() {
     }
