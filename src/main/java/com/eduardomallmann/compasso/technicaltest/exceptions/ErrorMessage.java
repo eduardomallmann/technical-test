@@ -1,8 +1,7 @@
 package com.eduardomallmann.compasso.technicaltest.exceptions;
 
-import com.verint.suntech.adint.customer.commons.builder.Builder;
+import com.eduardomallmann.compasso.technicaltest.utils.Builder;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
