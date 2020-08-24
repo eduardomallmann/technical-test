@@ -2,6 +2,7 @@ package com.eduardomallmann.compasso.technicaltest.domains.city;
 
 import com.eduardomallmann.compasso.technicaltest.exceptions.BusinessException;
 import com.eduardomallmann.compasso.technicaltest.exceptions.ErrorMessage;
+import com.eduardomallmann.compasso.technicaltest.utils.GenericRestController;
 import com.eduardomallmann.compasso.technicaltest.utils.Response;
 import com.eduardomallmann.compasso.technicaltest.utils.ResponseContent;
 import org.slf4j.Logger;
@@ -27,7 +28,7 @@ import java.util.concurrent.CompletableFuture;
  */
 @RestController
 @RequestMapping("cities")
-public class CityController {
+public class CityController implements GenericRestController {
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
     private final CityService cityService;
@@ -91,43 +92,5 @@ public class CityController {
     @GetMapping(params = "state")
     public DeferredResult<ResponseEntity<Response<CityDTO>>> getCitiesByState(@RequestParam("state") final String state) throws BusinessException {
         return this.getSearchResult(this.cityService.findAllByState(state));
-    }
-
-    /**
-     * Retrieves the search result and wraps it inside the asynchronous response.
-     *
-     * @param future asynchronous search result
-     *
-     * @return an asynchronous response with {@link CityDTO} objects encapsulated in a {@link Response} object.
-     */
-    private DeferredResult<ResponseEntity<Response<CityDTO>>> getSearchResult(final CompletableFuture<Response<CityDTO>> future) {
-        DeferredResult<ResponseEntity<Response<CityDTO>>> deferredResult = new DeferredResult<>();
-        future.whenCompleteAsync((result, throwable) -> {
-            if (throwable != null) {
-                this.addErrorMessage(deferredResult, throwable);
-            } else {
-                deferredResult.setResult(ResponseEntity.ok(result));
-            }
-        });
-        return deferredResult;
-    }
-
-    /**
-     * Add error message in the response of the call.
-     *
-     * @param deferredResult response of the call
-     * @param throwable      error message
-     */
-    private void addErrorMessage(DeferredResult<ResponseEntity<Response<CityDTO>>> deferredResult, Throwable throwable) {
-        if (throwable.getCause() instanceof BusinessException) {
-            ErrorMessage errorMessage = ((BusinessException) throwable.getCause()).getErrorMessage();
-            deferredResult.setErrorResult(ResponseEntity.status(errorMessage.getStatus())
-                                                  .body(Response.of(ResponseContent.builder()
-                                                                            .status(HttpStatus.valueOf(errorMessage.getStatus()).getReasonPhrase())
-                                                                            .errorMessage(errorMessage)
-                                                                            .build())));
-        } else {
-            deferredResult.setErrorResult(throwable);
-        }
     }
 }

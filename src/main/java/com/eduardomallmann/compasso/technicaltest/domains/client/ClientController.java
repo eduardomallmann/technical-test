@@ -2,6 +2,7 @@ package com.eduardomallmann.compasso.technicaltest.domains.client;
 
 import com.eduardomallmann.compasso.technicaltest.exceptions.BusinessException;
 import com.eduardomallmann.compasso.technicaltest.exceptions.ErrorMessage;
+import com.eduardomallmann.compasso.technicaltest.utils.GenericRestController;
 import com.eduardomallmann.compasso.technicaltest.utils.Response;
 import com.eduardomallmann.compasso.technicaltest.utils.ResponseContent;
 import org.springframework.http.HttpStatus;
@@ -28,7 +29,7 @@ import java.util.concurrent.CompletableFuture;
  */
 @RestController
 @RequestMapping("clients")
-public class ClientController {
+public class ClientController implements GenericRestController {
 
     private final ClientService clientService;
 
@@ -123,43 +124,5 @@ public class ClientController {
     @GetMapping("/{id}")
     public DeferredResult<ResponseEntity<Response<ClientDTO>>> getClientById(@PathVariable("id") final Long id) throws BusinessException {
         return this.getSearchResult(this.clientService.findClientById(id));
-    }
-
-    /**
-     * Retrieves the search result and wraps it inside the asynchronous response.
-     *
-     * @param future asynchronous search result
-     *
-     * @return an asynchronous response with {@link ClientDTO} objects encapsulated in a {@link Response} object.
-     */
-    private DeferredResult<ResponseEntity<Response<ClientDTO>>> getSearchResult(final CompletableFuture<Response<ClientDTO>> future) {
-        DeferredResult<ResponseEntity<Response<ClientDTO>>> deferredResult = new DeferredResult<>();
-        future.whenCompleteAsync((result, throwable) -> {
-            if (throwable != null) {
-                this.addErrorMessage(deferredResult, throwable);
-            } else {
-                deferredResult.setResult(ResponseEntity.ok(result));
-            }
-        });
-        return deferredResult;
-    }
-
-    /**
-     * Add error message in the response of the call.
-     *
-     * @param deferredResult response of the call
-     * @param throwable      error message
-     */
-    private void addErrorMessage(DeferredResult<ResponseEntity<Response<ClientDTO>>> deferredResult, Throwable throwable) {
-        if (throwable.getCause() instanceof BusinessException) {
-            ErrorMessage errorMessage = ((BusinessException) throwable.getCause()).getErrorMessage();
-            deferredResult.setErrorResult(ResponseEntity.status(errorMessage.getStatus())
-                                                  .body(Response.of(ResponseContent.builder()
-                                                                            .status(HttpStatus.valueOf(errorMessage.getStatus()).getReasonPhrase())
-                                                                            .errorMessage(errorMessage)
-                                                                            .build())));
-        } else {
-            deferredResult.setErrorResult(throwable);
-        }
     }
 }
