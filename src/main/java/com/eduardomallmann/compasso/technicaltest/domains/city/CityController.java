@@ -1,7 +1,9 @@
 package com.eduardomallmann.compasso.technicaltest.domains.city;
 
 import com.eduardomallmann.compasso.technicaltest.exceptions.BusinessException;
+import com.eduardomallmann.compasso.technicaltest.exceptions.ErrorMessage;
 import com.eduardomallmann.compasso.technicaltest.utils.Response;
+import com.eduardomallmann.compasso.technicaltest.utils.ResponseContent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -53,7 +55,13 @@ public class CityController {
         log.info("Create City request call with: \n{}", cityRequest.toJson());
         DeferredResult<ResponseEntity<Response<CityDTO>>> deferredResult = new DeferredResult<>();
         CompletableFuture<Response<CityDTO>> future = this.cityService.save(cityRequest);
-        future.whenCompleteAsync((result, throwable) -> deferredResult.setResult(ResponseEntity.status(HttpStatus.CREATED).body(result)));
+        future.whenCompleteAsync((result, throwable) -> {
+            if (throwable != null) {
+                this.addErrorMessage(deferredResult, throwable);
+            } else {
+                deferredResult.setResult(ResponseEntity.status(HttpStatus.CREATED).body(result));
+            }
+        });
         return deferredResult;
     }
 
@@ -94,7 +102,32 @@ public class CityController {
      */
     private DeferredResult<ResponseEntity<Response<CityDTO>>> getSearchResult(final CompletableFuture<Response<CityDTO>> future) {
         DeferredResult<ResponseEntity<Response<CityDTO>>> deferredResult = new DeferredResult<>();
-        future.whenCompleteAsync((result, throwable) -> deferredResult.setResult(ResponseEntity.ok(result)));
+        future.whenCompleteAsync((result, throwable) -> {
+            if (throwable != null) {
+                this.addErrorMessage(deferredResult, throwable);
+            } else {
+                deferredResult.setResult(ResponseEntity.ok(result));
+            }
+        });
         return deferredResult;
+    }
+
+    /**
+     * Add error message in the response of the call.
+     *
+     * @param deferredResult response of the call
+     * @param throwable      error message
+     */
+    private void addErrorMessage(DeferredResult<ResponseEntity<Response<CityDTO>>> deferredResult, Throwable throwable) {
+        if (throwable.getCause() instanceof BusinessException) {
+            ErrorMessage errorMessage = ((BusinessException) throwable.getCause()).getErrorMessage();
+            deferredResult.setErrorResult(ResponseEntity.status(errorMessage.getStatus())
+                                                  .body(Response.of(ResponseContent.builder()
+                                                                            .status(HttpStatus.valueOf(errorMessage.getStatus()).getReasonPhrase())
+                                                                            .errorMessage(errorMessage)
+                                                                            .build())));
+        } else {
+            deferredResult.setErrorResult(throwable);
+        }
     }
 }

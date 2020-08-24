@@ -1,6 +1,7 @@
 package com.eduardomallmann.compasso.technicaltest.domains.client;
 
 import com.eduardomallmann.compasso.technicaltest.exceptions.BusinessException;
+import com.eduardomallmann.compasso.technicaltest.exceptions.ErrorMessage;
 import com.eduardomallmann.compasso.technicaltest.utils.Response;
 import com.eduardomallmann.compasso.technicaltest.utils.ResponseContent;
 import org.springframework.http.HttpStatus;
@@ -53,7 +54,13 @@ public class ClientController {
     public DeferredResult<ResponseEntity<Response<ClientDTO>>> createClient(@Valid @RequestBody final ClientDTO clientRequest) throws BusinessException {
         DeferredResult<ResponseEntity<Response<ClientDTO>>> deferredResult = new DeferredResult<>();
         CompletableFuture<Response<ClientDTO>> future = this.clientService.save(clientRequest);
-        future.whenCompleteAsync((result, throwable) -> deferredResult.setResult(ResponseEntity.status(HttpStatus.CREATED).body(result)));
+        future.whenCompleteAsync((result, throwable) -> {
+            if (throwable != null) {
+                this.addErrorMessage(deferredResult, throwable);
+            } else {
+                deferredResult.setResult(ResponseEntity.status(HttpStatus.CREATED).body(result));
+            }
+        });
         return deferredResult;
     }
 
@@ -77,7 +84,7 @@ public class ClientController {
     /**
      * Changes the {@link Client} full name for the informed register.
      *
-     * @param id   {@link Client} database identifier
+     * @param id         {@link Client} database identifier
      * @param clientName {@link ClientNameDTO} request body with the value to be exchanged as a full name of the register
      *
      * @return an asynchronous response with {@link ClientDTO} object encapsulated in a {@link Response} object.
@@ -127,7 +134,32 @@ public class ClientController {
      */
     private DeferredResult<ResponseEntity<Response<ClientDTO>>> getSearchResult(final CompletableFuture<Response<ClientDTO>> future) {
         DeferredResult<ResponseEntity<Response<ClientDTO>>> deferredResult = new DeferredResult<>();
-        future.whenCompleteAsync((result, throwable) -> deferredResult.setResult(ResponseEntity.ok(result)));
+        future.whenCompleteAsync((result, throwable) -> {
+            if (throwable != null) {
+                this.addErrorMessage(deferredResult, throwable);
+            } else {
+                deferredResult.setResult(ResponseEntity.ok(result));
+            }
+        });
         return deferredResult;
+    }
+
+    /**
+     * Add error message in the response of the call.
+     *
+     * @param deferredResult response of the call
+     * @param throwable      error message
+     */
+    private void addErrorMessage(DeferredResult<ResponseEntity<Response<ClientDTO>>> deferredResult, Throwable throwable) {
+        if (throwable.getCause() instanceof BusinessException) {
+            ErrorMessage errorMessage = ((BusinessException) throwable.getCause()).getErrorMessage();
+            deferredResult.setErrorResult(ResponseEntity.status(errorMessage.getStatus())
+                                                  .body(Response.of(ResponseContent.builder()
+                                                                            .status(HttpStatus.valueOf(errorMessage.getStatus()).getReasonPhrase())
+                                                                            .errorMessage(errorMessage)
+                                                                            .build())));
+        } else {
+            deferredResult.setErrorResult(throwable);
+        }
     }
 }
