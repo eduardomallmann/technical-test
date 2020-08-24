@@ -1,5 +1,6 @@
 package com.eduardomallmann.compasso.technicaltest.domains.city;
 
+import com.eduardomallmann.compasso.technicaltest.utils.GenericDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -16,7 +17,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(NON_EMPTY)
-public class CityDTO {
+public class CityDTO extends GenericDTO {
 
     @NotBlank(message = "{city.validation.error}")
     private String city;
@@ -70,38 +71,6 @@ public class CityDTO {
         this.city = this.normalizeField(this.city);
         this.state = this.normalizeField(this.state);
         return this;
-    }
-
-    /**
-     * Normalizes a string parameter informed with Camelcase and ignoring prepositions.
-     *
-     * @param field a String parameter
-     *
-     * @return a String.
-     */
-    private String normalizeField(final String field) {
-        final String[] words = field.split("\\s");
-        StringBuilder normalizeField = new StringBuilder();
-        for (int i = 0; i < words.length; i++) {
-            String word = words[i];
-            if (i == 0) {
-                normalizeField
-                        .append(word.substring(0, 1).toUpperCase())
-                        .append(word.substring(1).toLowerCase());
-            } else {
-                if (word.length() <= 3 && word.toLowerCase().startsWith("d") && i != words.length -1) {
-                    normalizeField
-                            .append(" ")
-                            .append(word.toLowerCase());
-                } else {
-                    normalizeField
-                            .append(" ")
-                            .append(word.substring(0, 1).toUpperCase())
-                            .append(word.substring(1).toLowerCase());
-                }
-            }
-        }
-        return normalizeField.toString();
     }
 
     public String getCity() {

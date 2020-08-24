@@ -1,5 +1,6 @@
 package com.eduardomallmann.compasso.technicaltest.domains.city;
 
+import com.eduardomallmann.compasso.technicaltest.exceptions.BusinessException;
 import com.eduardomallmann.compasso.technicaltest.utils.Response;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -36,10 +37,10 @@ public class CityService {
      *
      * @return an asynchronous response with {@link CityDTO} object encapsulated in a {@link Response} object.
      *
-     * @throws CityException in case of the application throws any kind of exception.
+     * @throws BusinessException in case of the application throws any kind of exception.
      */
     @Async
-    public CompletableFuture<Response<CityDTO>> save(final CityDTO cityRequest) throws CityException {
+    public CompletableFuture<Response<CityDTO>> save(final CityDTO cityRequest) throws BusinessException {
         try {
             Optional<City> city = cityRepository.findByNameAndState(cityRequest.getCity().toLowerCase(), cityRequest.getState().toLowerCase());
             if (city.isPresent()) {
@@ -48,7 +49,7 @@ public class CityService {
             City citySaved = this.cityRepository.save(cityRequest.getCityObject());
             return CompletableFuture.completedFuture(Response.of(new CityDTO(citySaved).getNormalized()));
         } catch (Exception e) {
-            throw new CityException("city.save.error", e.getMessage());
+            throw new BusinessException("city.save.error", e.getMessage());
         }
     }
 
@@ -59,18 +60,18 @@ public class CityService {
      *
      * @return an asynchronous response with {@link CityDTO} objects encapsulated in a {@link Response} object.
      *
-     * @throws CityException in case of the application throws any kind of exception.
+     * @throws BusinessException in case of the application throws any kind of exception.
      */
     @Async
-    public CompletableFuture<Response<CityDTO>> findAllByNameLike(final String cityName) throws CityException {
+    public CompletableFuture<Response<CityDTO>> findAllByNameLike(final String cityName) throws BusinessException {
         try {
             String cityNameLike = "%".concat(cityName.toLowerCase()).concat("%");
-            List<City> cities = cityRepository.findAllByNameLike(cityNameLike);
-            return CompletableFuture.completedFuture(Response.of(cities.stream()
-                                                                         .map(city -> new CityDTO(city).getNormalized())
-                                                                         .collect(Collectors.toList())));
+            List<CityDTO> cities = cityRepository.findAllByNameLike(cityNameLike).stream()
+                                           .map(city -> new CityDTO(city).getNormalized())
+                                           .collect(Collectors.toList());
+            return CompletableFuture.completedFuture(Response.of(cities));
         } catch (Exception e) {
-            throw new CityException("city.list.name.error", e.getMessage());
+            throw new BusinessException("city.list.name.error", e.getMessage());
         }
     }
 
@@ -81,17 +82,17 @@ public class CityService {
      *
      * @return an asynchronous response with {@link CityDTO} objects encapsulated in a {@link Response} object.
      *
-     * @throws CityException in case of the application throws any kind of exception.
+     * @throws BusinessException in case of the application throws any kind of exception.
      */
     @Async
-    public CompletableFuture<Response<CityDTO>> findAllByState(final String state) throws CityException {
+    public CompletableFuture<Response<CityDTO>> findAllByState(final String state) throws BusinessException {
         try {
             List<City> cities = cityRepository.findAllByState(state.toLowerCase());
             return CompletableFuture.completedFuture(Response.of(cities.stream()
                                                                          .map(city -> new CityDTO(city).getNormalized())
                                                                          .collect(Collectors.toList())));
         } catch (Exception e) {
-            throw new CityException("city.list.state.error", e.getMessage());
+            throw new BusinessException("city.list.state.error", e.getMessage());
         }
     }
 

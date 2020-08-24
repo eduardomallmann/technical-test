@@ -1,6 +1,9 @@
 package com.eduardomallmann.compasso.technicaltest.domains.city;
 
+import com.eduardomallmann.compasso.technicaltest.exceptions.BusinessException;
 import com.eduardomallmann.compasso.technicaltest.utils.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,6 +27,7 @@ import java.util.concurrent.CompletableFuture;
 @RequestMapping("cities")
 public class CityController {
 
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
     private final CityService cityService;
 
     /**
@@ -42,10 +46,11 @@ public class CityController {
      *
      * @return an asynchronous response with {@link CityDTO} object encapsulated in a {@link Response} object.
      *
-     * @throws CityException in case of the application throws any kind of exception.
+     * @throws BusinessException in case of the application throws any kind of exception.
      */
     @PostMapping
-    public DeferredResult<ResponseEntity<Response<CityDTO>>> createCity(@Valid @RequestBody CityDTO cityRequest) throws CityException {
+    public DeferredResult<ResponseEntity<Response<CityDTO>>> createCity(@Valid @RequestBody final CityDTO cityRequest) throws BusinessException {
+        log.info("Create City request call with: \n{}", cityRequest.toJson());
         DeferredResult<ResponseEntity<Response<CityDTO>>> deferredResult = new DeferredResult<>();
         CompletableFuture<Response<CityDTO>> future = this.cityService.save(cityRequest);
         future.whenCompleteAsync((result, throwable) -> deferredResult.setResult(ResponseEntity.status(HttpStatus.CREATED).body(result)));
@@ -59,10 +64,10 @@ public class CityController {
      *
      * @return an asynchronous response with {@link CityDTO} objects encapsulated in a {@link Response} object.
      *
-     * @throws CityException in case of the application throws any kind of exception.
+     * @throws BusinessException in case of the application throws any kind of exception.
      */
     @GetMapping(params = "name")
-    public DeferredResult<ResponseEntity<Response<CityDTO>>> getCitiesByName(@RequestParam("name") final String cityName) throws CityException {
+    public DeferredResult<ResponseEntity<Response<CityDTO>>> getCitiesByName(@RequestParam("name") final String cityName) throws BusinessException {
         return this.getSearchResult(this.cityService.findAllByNameLike(cityName));
     }
 
@@ -73,10 +78,10 @@ public class CityController {
      *
      * @return an asynchronous response with {@link CityDTO} objects encapsulated in a {@link Response} object.
      *
-     * @throws CityException in case of the application throws any kind of exception.
+     * @throws BusinessException in case of the application throws any kind of exception.
      */
     @GetMapping(params = "state")
-    public DeferredResult<ResponseEntity<Response<CityDTO>>> getCitiesByState(@RequestParam("state") final String state) throws CityException {
+    public DeferredResult<ResponseEntity<Response<CityDTO>>> getCitiesByState(@RequestParam("state") final String state) throws BusinessException {
         return this.getSearchResult(this.cityService.findAllByState(state));
     }
 
