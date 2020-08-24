@@ -1,6 +1,5 @@
 package com.eduardomallmann.compasso.technicaltest.exceptions;
 
-import com.eduardomallmann.compasso.technicaltest.domains.city.CityException;
 import com.eduardomallmann.compasso.technicaltest.utils.Response;
 import com.eduardomallmann.compasso.technicaltest.utils.ResponseContent;
 import org.springframework.http.HttpHeaders;
@@ -12,7 +11,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.util.Arrays;
 import java.util.Collections;
 
 /**
@@ -25,32 +23,14 @@ import java.util.Collections;
 public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
     /**
-     * Handles unique targetName constraint exception conflict response to the origin.
-     *
-     * @param ex exception thrown
-     *
-     * @return Error message to the origin.
-     */
-/*
-    @ExceptionHandler(value = UniqueException.class)
-    protected ResponseEntity<Response<ResponseContent>> handleUniqueNameConstraintConflict(final UniqueException ex) {
-        return ResponseEntity.status(ex.getErrorMessage().getStatus())
-                       .body(Response.of(ResponseContent.builder()
-                                                 .status(HttpStatus.valueOf(ex.getErrorMessage().getStatus()).getReasonPhrase())
-                                                 .errorMessage(ex.getErrorMessage())
-                                                 .build()));
-    }
-    */
-    
-    /**
      * Handles object search not found exception conflict response to the origin.
      *
      * @param ex exception thrown
      *
-     * @return Error message to the origin.
+     * @return the exceptions in a error message standard inside a response entity.
      */
-    @ExceptionHandler(value = CityException.class)
-    protected ResponseEntity<Response<ResponseContent>> handleCityExceptionConflict(final CityException ex) {
+    @ExceptionHandler(value = BusinessException.class)
+    protected ResponseEntity<Response<ResponseContent>> handleBusinessExceptions(final BusinessException ex) {
         return ResponseEntity.status(ex.getErrorMessage().getStatus())
                        .body(Response.of(ResponseContent.builder()
                                                  .status(HttpStatus.valueOf(ex.getErrorMessage().getStatus()).getReasonPhrase())
@@ -63,7 +43,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
      *
      * @param ex exception thrown
      *
-     * @return the exceptions in a error message standard inside a response entity
+     * @return the exceptions in a error message standard inside a response entity.
      */
     @ExceptionHandler(value = Exception.class)
     protected ResponseEntity<Response<ResponseContent>> handleExceptions(final Exception ex) {
@@ -76,6 +56,16 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
                                                         .build()), HttpStatus.BAD_REQUEST);
     }
 
+    /**
+     * Transforms the validation exceptions into an application exception to be handle by the consumer.
+     *
+     * @param ex      Exception thrown
+     * @param headers response headers
+     * @param status  response status
+     * @param request http request
+     *
+     * @return the exceptions in a error message standard inside a response entity.
+     */
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
                                                                   HttpHeaders headers,
