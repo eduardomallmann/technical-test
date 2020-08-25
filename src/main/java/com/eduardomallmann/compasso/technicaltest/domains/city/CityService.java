@@ -2,6 +2,8 @@ package com.eduardomallmann.compasso.technicaltest.domains.city;
 
 import com.eduardomallmann.compasso.technicaltest.exceptions.BusinessException;
 import com.eduardomallmann.compasso.technicaltest.utils.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +20,8 @@ import java.util.stream.Collectors;
  */
 @Service
 public class CityService {
+
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     private final CityRepository cityRepository;
 
@@ -44,11 +48,16 @@ public class CityService {
         try {
             Optional<City> city = cityRepository.findByNameAndState(cityRequest.getCity().toLowerCase(), cityRequest.getState().toLowerCase());
             if (city.isPresent()) {
+                log.debug("City already exists: {}", cityRequest.getNormalized().toJson());
                 return CompletableFuture.completedFuture(Response.of(cityRequest.getNormalized()));
             }
             City citySaved = this.cityRepository.save(cityRequest.getCityObject());
-            return CompletableFuture.completedFuture(Response.of(new CityDTO(citySaved).getNormalized()));
+            CityDTO result = new CityDTO(citySaved).getNormalized();
+            log.debug("City created: {}", result.toJson());
+            return CompletableFuture.completedFuture(Response.of(result));
         } catch (Exception e) {
+            log.error("Error on creating creating a new city: {} ", cityRequest.getNormalized().toJson());
+            log.error("Exception catched: {}", e.getMessage());
             throw new BusinessException("city.save.error", e.getMessage());
         }
     }
@@ -69,8 +78,10 @@ public class CityService {
             List<CityDTO> cities = cityRepository.findAllByNameLike(cityNameLike).stream()
                                            .map(city -> new CityDTO(city).getNormalized())
                                            .collect(Collectors.toList());
+            log.debug("Total of city found by name {}: {}", cityName, cities.size());
             return CompletableFuture.completedFuture(Response.of(cities));
         } catch (Exception e) {
+            log.error("Error on searching city by name {}: {}", cityName, e.getMessage());
             throw new BusinessException("city.list.name.error", e.getMessage());
         }
     }
@@ -88,10 +99,12 @@ public class CityService {
     public CompletableFuture<Response<CityDTO>> findAllByState(final String state) throws BusinessException {
         try {
             List<City> cities = cityRepository.findAllByState(state.toLowerCase());
+            log.debug("Total of city found by state {}: {}", state, cities.size());
             return CompletableFuture.completedFuture(Response.of(cities.stream()
                                                                          .map(city -> new CityDTO(city).getNormalized())
                                                                          .collect(Collectors.toList())));
         } catch (Exception e) {
+            log.error("Error on searching city by state {}: {}", state, e.getMessage());
             throw new BusinessException("city.list.state.error", e.getMessage());
         }
     }

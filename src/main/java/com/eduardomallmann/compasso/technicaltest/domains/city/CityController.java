@@ -53,7 +53,7 @@ public class CityController implements GenericRestController {
      */
     @PostMapping
     public DeferredResult<ResponseEntity<Response<CityDTO>>> createCity(@Valid @RequestBody final CityDTO cityRequest) throws BusinessException {
-        log.info("Create City request call with: \n{}", cityRequest.toJson());
+        log.info("Create City request call with: {}", cityRequest.toJson());
         DeferredResult<ResponseEntity<Response<CityDTO>>> deferredResult = new DeferredResult<>();
         CompletableFuture<Response<CityDTO>> future = this.cityService.save(cityRequest);
         future.whenCompleteAsync((result, throwable) -> {
@@ -77,6 +77,7 @@ public class CityController implements GenericRestController {
      */
     @GetMapping(params = "name")
     public DeferredResult<ResponseEntity<Response<CityDTO>>> getCitiesByName(@RequestParam("name") final String cityName) throws BusinessException {
+        log.info("Get Cities by name request call with: {}", cityName);
         return this.getSearchResult(this.cityService.findAllByNameLike(cityName));
     }
 
@@ -91,6 +92,7 @@ public class CityController implements GenericRestController {
      */
     @GetMapping(params = "state")
     public DeferredResult<ResponseEntity<Response<CityDTO>>> getCitiesByState(@RequestParam("state") final String state) throws BusinessException {
+        log.info("Get Cities by state request call with: {}", state);
         return this.getSearchResult(this.cityService.findAllByState(state));
     }
 }
