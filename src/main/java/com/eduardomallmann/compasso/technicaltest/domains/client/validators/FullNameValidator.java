@@ -1,5 +1,8 @@
 package com.eduardomallmann.compasso.technicaltest.domains.client.validators;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
@@ -10,6 +13,8 @@ import javax.validation.ConstraintValidatorContext;
  * @since 0.0.1
  */
 public class FullNameValidator implements ConstraintValidator<FullName, String> {
+
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     /**
      * Initializes the validator in preparation for {@link FullNameValidator#isValid(String, ConstraintValidatorContext)} calls. The constraint annotation for a given
@@ -38,6 +43,8 @@ public class FullNameValidator implements ConstraintValidator<FullName, String> 
      */
     @Override
     public boolean isValid(final String value, final ConstraintValidatorContext context) {
-        return value != null && !value.trim().isEmpty() && value.split("\\s").length > 1;
+        final boolean result = value != null && !value.trim().isEmpty() && value.split("\\s").length > 1;
+        if (!result) log.error("Full name validation failed for: {}", value);
+        return result;
     }
 }

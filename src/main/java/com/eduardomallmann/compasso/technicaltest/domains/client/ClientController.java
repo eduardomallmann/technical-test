@@ -1,10 +1,11 @@
 package com.eduardomallmann.compasso.technicaltest.domains.client;
 
 import com.eduardomallmann.compasso.technicaltest.exceptions.BusinessException;
-import com.eduardomallmann.compasso.technicaltest.exceptions.ErrorMessage;
 import com.eduardomallmann.compasso.technicaltest.utils.GenericRestController;
 import com.eduardomallmann.compasso.technicaltest.utils.Response;
 import com.eduardomallmann.compasso.technicaltest.utils.ResponseContent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -31,6 +32,7 @@ import java.util.concurrent.CompletableFuture;
 @RequestMapping("clients")
 public class ClientController implements GenericRestController {
 
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
     private final ClientService clientService;
 
     /**
@@ -53,6 +55,7 @@ public class ClientController implements GenericRestController {
      */
     @PostMapping
     public DeferredResult<ResponseEntity<Response<ClientDTO>>> createClient(@Valid @RequestBody final ClientDTO clientRequest) throws BusinessException {
+        log.info("Create client request call with: {}", clientRequest.toJson());
         DeferredResult<ResponseEntity<Response<ClientDTO>>> deferredResult = new DeferredResult<>();
         CompletableFuture<Response<ClientDTO>> future = this.clientService.save(clientRequest);
         future.whenCompleteAsync((result, throwable) -> {
@@ -76,6 +79,7 @@ public class ClientController implements GenericRestController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Response<ResponseContent>> deleteClientById(@PathVariable("id") final Long id) throws BusinessException {
+        log.info("Delete client request call with id: {}", id);
         this.clientService.removeClient(id);
         return ResponseEntity.ok(Response.of(ResponseContent.builder()
                                                      .status(HttpStatus.OK.name())
@@ -95,6 +99,7 @@ public class ClientController implements GenericRestController {
     @PatchMapping("/{id}")
     public DeferredResult<ResponseEntity<Response<ClientDTO>>> updateClientName(@PathVariable("id") final Long id,
                                                                                 @RequestBody final ClientNameDTO clientName) throws BusinessException {
+        log.info("Update client name request call for id {} with: {}", id, clientName.toJson());
         return this.getSearchResult(this.clientService.updateClientName(id, clientName.getName()));
     }
 
@@ -109,6 +114,7 @@ public class ClientController implements GenericRestController {
      */
     @GetMapping(params = "name")
     public DeferredResult<ResponseEntity<Response<ClientDTO>>> getClientsByName(@RequestParam("name") final String clientName) throws BusinessException {
+        log.info("Get clients by name request call with: {}", clientName);
         return this.getSearchResult(this.clientService.findAllByFullNameLike(clientName));
     }
 
@@ -123,6 +129,7 @@ public class ClientController implements GenericRestController {
      */
     @GetMapping("/{id}")
     public DeferredResult<ResponseEntity<Response<ClientDTO>>> getClientById(@PathVariable("id") final Long id) throws BusinessException {
+        log.info("Get client by id request call with id: {}", id);
         return this.getSearchResult(this.clientService.findClientById(id));
     }
 }

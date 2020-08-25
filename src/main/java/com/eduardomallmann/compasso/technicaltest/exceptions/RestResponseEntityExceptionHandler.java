@@ -2,6 +2,8 @@ package com.eduardomallmann.compasso.technicaltest.exceptions;
 
 import com.eduardomallmann.compasso.technicaltest.utils.Response;
 import com.eduardomallmann.compasso.technicaltest.utils.ResponseContent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +24,8 @@ import java.util.Objects;
  */
 @ControllerAdvice
 public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
+
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     /**
      * Handles object search not found exception conflict response to the origin.
@@ -76,6 +80,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         errorMessage.setMessage(Objects.requireNonNull(ex.getBindingResult().getAllErrors().get(0).getDefaultMessage()));
         errorMessage.setErrors(Collections.singletonList(ex.getMessage()));
         errorMessage.setStatus(HttpStatus.BAD_REQUEST.value());
+        log.error("Handling constraint validation error: {} for {}", errorMessage.getMessage(), ex.getBindingResult().getTarget());
         return new ResponseEntity<>(Response.of(ResponseContent.builder()
                                                         .status(HttpStatus.valueOf(errorMessage.getStatus()).getReasonPhrase())
                                                         .errorMessage(errorMessage)

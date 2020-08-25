@@ -1,6 +1,8 @@
 package com.eduardomallmann.compasso.technicaltest.domains.client.validators;
 
 import com.eduardomallmann.compasso.technicaltest.domains.client.ClientDTO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -13,6 +15,8 @@ import javax.validation.ConstraintValidatorContext;
  * @since 0.0.1
  */
 public class ClientCityValidator implements ConstraintValidator<ClientCityValidation, ClientDTO> {
+
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     /**
      * Initializes the validator in preparation for {@link ClientCityValidator#isValid(ClientDTO, ConstraintValidatorContext)} calls. The constraint annotation for a
@@ -42,6 +46,8 @@ public class ClientCityValidator implements ConstraintValidator<ClientCityValida
     public boolean isValid(final ClientDTO value, final ConstraintValidatorContext context) {
         final boolean hasCity = value.getCity() != null && !value.getCity().trim().isEmpty();
         final boolean hasState = value.getState() != null && !value.getState().trim().isEmpty();
-        return (!hasCity && !hasState) || (hasCity && hasState);
+        final boolean result = (!hasCity && !hasState) || (hasCity && hasState);
+        if (!result) log.error("Client city constraint validation failed for: {}", value.toJson());
+        return result;
     }
 }

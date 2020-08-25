@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 public class CityService {
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
-
     private final CityRepository cityRepository;
 
     /**
@@ -56,7 +55,7 @@ public class CityService {
             log.debug("City created: {}", result.toJson());
             return CompletableFuture.completedFuture(Response.of(result));
         } catch (Exception e) {
-            log.error("Error on creating creating a new city: {} ", cityRequest.getNormalized().toJson());
+            log.error("Error on creating a new city: {} ", cityRequest.getNormalized().toJson());
             log.error("Exception catched: {}", e.getMessage());
             throw new BusinessException("city.save.error", e.getMessage());
         }
@@ -78,7 +77,7 @@ public class CityService {
             List<CityDTO> cities = cityRepository.findAllByNameLike(cityNameLike).stream()
                                            .map(city -> new CityDTO(city).getNormalized())
                                            .collect(Collectors.toList());
-            log.debug("Total of city found by name {}: {}", cityName, cities.size());
+            log.debug("Total of cities found by name {}: {}", cityName, cities.size());
             return CompletableFuture.completedFuture(Response.of(cities));
         } catch (Exception e) {
             log.error("Error on searching city by name {}: {}", cityName, e.getMessage());

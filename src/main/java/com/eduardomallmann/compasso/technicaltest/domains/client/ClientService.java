@@ -1,9 +1,12 @@
 package com.eduardomallmann.compasso.technicaltest.domains.client;
 
 import com.eduardomallmann.compasso.technicaltest.domains.city.City;
+import com.eduardomallmann.compasso.technicaltest.domains.city.CityDTO;
 import com.eduardomallmann.compasso.technicaltest.domains.city.CityRepository;
 import com.eduardomallmann.compasso.technicaltest.exceptions.BusinessException;
 import com.eduardomallmann.compasso.technicaltest.utils.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +26,7 @@ import java.util.stream.Collectors;
 @Service
 public class ClientService {
 
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
     private final ClientRepository clientRepository;
     private final CityRepository cityRepository;
 
@@ -51,6 +55,7 @@ public class ClientService {
     public CompletableFuture<Response<ClientDTO>> save(final ClientDTO clientRequest) throws BusinessException {
         try {
             if (clientRequest.getId() != null) {
+                log.error("Client creation attempt failed due existent id in the request: {}", clientRequest.toJson());
                 throw new BusinessException("client.save.new.error");
             }
             Client client = clientRequest.getClient();
@@ -60,13 +65,18 @@ public class ClientService {
                 if (city.isPresent()) {
                     client.setCity(city.get());
                 } else {
+                    log.debug("Client creation creating also a new city: {}", new CityDTO(client.getCity()).getNormalized().toJson());
                     this.cityRepository.save(client.getCity());
                 }
             }
             this.clientRepository.save(client);
-            return CompletableFuture.completedFuture(Response.of(new ClientDTO(client)));
+            ClientDTO result = new ClientDTO(client);
+            log.debug("Client created: {}", result.toJson());
+            return CompletableFuture.completedFuture(Response.of(result));
         } catch (Exception e) {
             if (e instanceof BusinessException) throw e;
+            log.error("Error on creating a new client: {} ", clientRequest.toJson());
+            log.error("Exception catched: {}", e.getMessage());
             throw new BusinessException("client.save.error", e.getMessage());
         }
     }
@@ -91,8 +101,11 @@ public class ClientService {
                                        .map(ClientDTO::new)
                                        .collect(Collectors.toList()));
             }
-            return CompletableFuture.completedFuture(Response.of(clients.stream().distinct().collect(Collectors.toList())));
+            List<ClientDTO> result = clients.stream().distinct().collect(Collectors.toList());
+            log.debug("Total of clients found by name {}: {}", clientName, result.size());
+            return CompletableFuture.completedFuture(Response.of(result));
         } catch (Exception e) {
+            log.error("Error on searching client by name {}: {}", clientName, e.getMessage());
             throw new BusinessException("client.list.name.error", e.getMessage());
         }
     }
@@ -111,12 +124,16 @@ public class ClientService {
         try {
             Optional<Client> client = this.clientRepository.findById(id);
             if (client.isPresent()) {
-                return CompletableFuture.completedFuture(Response.of(new ClientDTO(client.get())));
+                ClientDTO result = new ClientDTO(client.get());
+                log.debug("Client found for id {}: {}", id, result.toJson());
+                return CompletableFuture.completedFuture(Response.of(result));
             } else {
+                log.error("Client not found for id: {}", id);
                 throw new BusinessException("client.search.id.not-found");
             }
         } catch (Exception e) {
             if (e instanceof BusinessException) throw e;
+            log.error("Error on searching client by id {}: {}", id, e.getMessage());
             throw new BusinessException("client.search.id.error", e.getMessage());
         }
     }
@@ -138,12 +155,16 @@ public class ClientService {
             this.clientRepository.updateClientFullName(id, clientName.toLowerCase());
             Optional<Client> client = this.clientRepository.findById(id);
             if (client.isPresent()) {
-                return CompletableFuture.completedFuture(Response.of(new ClientDTO(client.get())));
+                ClientDTO result = new ClientDTO(client.get());
+                log.debug("Client name updated for id {}: {}", id, result.toJson());
+                return CompletableFuture.completedFuture(Response.of(result));
             } else {
+                log.error("Client error on update name, id {} not found", id);
                 throw new BusinessException("client.update.response.error");
             }
         } catch (Exception e) {
             if (e instanceof BusinessException) throw e;
+            log.error("Error on updating client name with id {}: {}", id, e.getMessage());
             throw new BusinessException("client.update.error", e.getMessage());
         }
     }
@@ -158,7 +179,9 @@ public class ClientService {
     public void removeClient(final Long id) throws BusinessException {
         try {
             this.clientRepository.deleteById(id);
+            log.debug("Client with id {} removed", id);
         } catch (Exception e) {
+            log.error("Error on removing client with id {}: {}", id, e.getMessage());
             throw new BusinessException("client.delete.error", e.getMessage());
         }
     }
