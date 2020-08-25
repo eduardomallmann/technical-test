@@ -20,6 +20,21 @@ public class ClientNameDTO extends GenericDTO {
     @FullName
     private String name;
 
+    /**
+     * Main constructor, empty.
+     */
+    public ClientNameDTO() {
+    }
+
+    /**
+     * Optional constructor with full params.
+     *
+     * @param name client full name param
+     */
+    public ClientNameDTO(@FullName final String name) {
+        this.name = name;
+    }
+
     public String getName() {
         return name;
     }

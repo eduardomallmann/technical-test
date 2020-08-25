@@ -58,6 +58,7 @@
         <surefire.version>2.19.1</surefire.version>
         <failsafe.version>2.21.0</failsafe.version>
         <checkstyle.version>3.1.1</checkstyle.version>
+        <httpclient.version>4.5.12</httpclient.version>
         <surefire.skip>true</surefire.skip>
         <failsafe.skip>true</failsafe.skip>
     </properties>
@@ -98,6 +99,12 @@
                     <artifactId>junit-vintage-engine</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>${httpclient.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

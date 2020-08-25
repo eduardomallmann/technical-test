@@ -1,7 +1,6 @@
 package com.eduardomallmann.compasso.technicaltest.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ibm.dtfj.corereaders.zos.util.ObjectMap;
 
 import java.util.Arrays;
 import java.util.List;

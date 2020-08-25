@@ -22,7 +22,7 @@ public class BusinessException extends Exception {
     public BusinessException(final String key, final String error) {
         super(error);
         this.errorMessage = ErrorMessage.builder()
-                                    .status(404)
+                                    .status(400)
                                     .message(key)
                                     .errors(error)
                                     .build();
@@ -37,7 +37,7 @@ public class BusinessException extends Exception {
     public BusinessException(final String key) {
         super(MessageUtils.getMessage(key));
         this.errorMessage = ErrorMessage.builder()
-                                    .status(404)
+                                    .status(400)
                                     .message(key)
                                     .build();
     }

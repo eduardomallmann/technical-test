@@ -66,6 +66,7 @@ public class ClientService {
             this.clientRepository.save(client);
             return CompletableFuture.completedFuture(Response.of(new ClientDTO(client)));
         } catch (Exception e) {
+            if (e instanceof BusinessException) throw e;
             throw new BusinessException("client.save.error", e.getMessage());
         }
     }
@@ -115,6 +116,7 @@ public class ClientService {
                 throw new BusinessException("client.search.id.not-found");
             }
         } catch (Exception e) {
+            if (e instanceof BusinessException) throw e;
             throw new BusinessException("client.search.id.error", e.getMessage());
         }
     }
@@ -141,6 +143,7 @@ public class ClientService {
                 throw new BusinessException("client.update.response.error");
             }
         } catch (Exception e) {
+            if (e instanceof BusinessException) throw e;
             throw new BusinessException("client.update.error", e.getMessage());
         }
     }

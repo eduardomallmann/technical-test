@@ -44,6 +44,27 @@ public class ClientDTO extends GenericDTO {
     }
 
     /**
+     * Optional constructor, used for tests purposes.
+     *
+     * @param name     client full name
+     * @param gender   client gender
+     * @param birthday client date of birth
+     * @param city     client city
+     * @param state    client state
+     */
+    public ClientDTO(@FullName final String name,
+                     final String gender,
+                     @Past(message = "{client.validation.birthday.error}") final LocalDate birthday,
+                     final String city,
+                     final String state) {
+        this.name = name;
+        this.gender = gender;
+        this.birthday = birthday;
+        this.city = city;
+        this.state = state;
+    }
+
+    /**
      * Optional constructor, built from a {@link Client} object.
      *
      * @param client the {@link Client} object
@@ -67,8 +88,13 @@ public class ClientDTO extends GenericDTO {
      */
     @JsonIgnore
     public Client getClient() {
-        Client client = new Client(this.name.toLowerCase(), this.gender.toLowerCase(), this.birthday, null);
-        if (this.city != null && this.state != null) client.setCity(new City(this.city.toLowerCase(), this.state.toLowerCase()));
+        Client client = new Client(
+                this.name.toLowerCase(),
+                this.gender != null ? this.gender.toLowerCase() : null,
+                this.birthday, null);
+        if (this.city != null && this.state != null) {
+            client.setCity(new City(this.city.toLowerCase(), this.state.toLowerCase()));
+        }
         return client;
     }
 

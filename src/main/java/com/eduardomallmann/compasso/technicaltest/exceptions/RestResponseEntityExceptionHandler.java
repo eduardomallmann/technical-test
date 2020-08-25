@@ -12,6 +12,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.util.Collections;
+import java.util.Objects;
 
 /**
  * Class responsible for filtering the errors and response them in a global standard to the origin.
@@ -72,7 +73,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
                                                                   HttpStatus status,
                                                                   WebRequest request) {
         ErrorMessage errorMessage = new ErrorMessage();
-        errorMessage.setMessage(ex.getBindingResult().getFieldError().getDefaultMessage());
+        errorMessage.setMessage(Objects.requireNonNull(ex.getBindingResult().getAllErrors().get(0).getDefaultMessage()));
         errorMessage.setErrors(Collections.singletonList(ex.getMessage()));
         errorMessage.setStatus(HttpStatus.BAD_REQUEST.value());
         return new ResponseEntity<>(Response.of(ResponseContent.builder()

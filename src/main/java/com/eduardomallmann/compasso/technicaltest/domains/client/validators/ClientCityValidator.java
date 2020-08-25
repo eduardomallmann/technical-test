@@ -40,7 +40,7 @@ public class ClientCityValidator implements ConstraintValidator<ClientCityValida
      */
     @Override
     public boolean isValid(final ClientDTO value, final ConstraintValidatorContext context) {
-        final boolean hasCity = value.getCity() != null && !value.getState().trim().isEmpty();
+        final boolean hasCity = value.getCity() != null && !value.getCity().trim().isEmpty();
         final boolean hasState = value.getState() != null && !value.getState().trim().isEmpty();
         return (!hasCity && !hasState) || (hasCity && hasState);
     }
