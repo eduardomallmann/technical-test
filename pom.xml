@@ -58,6 +58,7 @@
         <surefire.version>2.19.1</surefire.version>
         <failsafe.version>2.21.0</failsafe.version>
         <checkstyle.version>3.1.1</checkstyle.version>
+        <maven-resources-plugin.version>3.1.0</maven-resources-plugin.version>
         <httpclient.version>4.5.12</httpclient.version>
         <surefire.skip>true</surefire.skip>
         <failsafe.skip>true</failsafe.skip>
@@ -83,6 +84,11 @@
         <dependency>
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-registry-prometheus</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-ui</artifactId>
+            <version>1.4.4</version>
         </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
@@ -171,6 +177,17 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>${maven-resources-plugin.version}</version>
+                <configuration>
+                    <delimiters>
+                        <delimiter>@</delimiter>
+                    </delimiters>
+                    <useDefaultDelimiters>false</useDefaultDelimiters>
+                </configuration>
             </plugin>
         </plugins>
         <resources>

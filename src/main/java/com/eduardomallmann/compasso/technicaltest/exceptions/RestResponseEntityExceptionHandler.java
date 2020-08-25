@@ -6,10 +6,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
@@ -34,7 +37,9 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
      *
      * @return the exceptions in a error message standard inside a response entity.
      */
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(value = BusinessException.class)
+    @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     protected ResponseEntity<Response<ResponseContent>> handleBusinessExceptions(final BusinessException ex) {
         return ResponseEntity.status(ex.getErrorMessage().getStatus())
                        .body(Response.of(ResponseContent.builder()
@@ -50,7 +55,9 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
      *
      * @return the exceptions in a error message standard inside a response entity.
      */
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(value = Exception.class)
+    @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     protected ResponseEntity<Response<ResponseContent>> handleExceptions(final Exception ex) {
         ErrorMessage errorMessage = new ErrorMessage();
         errorMessage.setMessage(ex.getMessage());
@@ -72,6 +79,8 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
      * @return the exceptions in a error message standard inside a response entity.
      */
     @Override
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
                                                                   HttpHeaders headers,
                                                                   HttpStatus status,

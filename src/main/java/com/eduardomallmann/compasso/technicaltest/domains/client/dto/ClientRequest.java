@@ -1,7 +1,7 @@
-package com.eduardomallmann.compasso.technicaltest.domains.client;
+package com.eduardomallmann.compasso.technicaltest.domains.client.dto;
 
 import com.eduardomallmann.compasso.technicaltest.domains.city.City;
-import com.eduardomallmann.compasso.technicaltest.domains.city.CityDTO;
+import com.eduardomallmann.compasso.technicaltest.domains.client.Client;
 import com.eduardomallmann.compasso.technicaltest.domains.client.validators.ClientCityValidation;
 import com.eduardomallmann.compasso.technicaltest.domains.client.validators.FullName;
 import com.eduardomallmann.compasso.technicaltest.utils.GenericDTO;
@@ -9,26 +9,23 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Past;
 import java.time.LocalDate;
-import java.time.Period;
 import java.util.Objects;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 
 /**
- * Client data transfer object responsible to encapsulate {@link Client} responses and requests.
+ * Client data transfer object responsible to encapsulate {@link Client} requests.
  *
  * @author eduardomallmann
  * @since 0.0.1
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(NON_EMPTY)
+@JsonIgnoreProperties(ignoreUnknown = true)
 @ClientCityValidation
-public class ClientDTO extends GenericDTO {
+public class ClientRequest extends GenericDTO {
 
-    private Long id;
     @FullName
     private String name;
     private String gender;
@@ -40,7 +37,7 @@ public class ClientDTO extends GenericDTO {
     /**
      * Main constructor, empty.
      */
-    public ClientDTO() {
+    public ClientRequest() {
     }
 
     /**
@@ -52,33 +49,16 @@ public class ClientDTO extends GenericDTO {
      * @param city     client city
      * @param state    client state
      */
-    public ClientDTO(@FullName final String name,
-                     final String gender,
-                     @Past(message = "{client.validation.birthday.error}") final LocalDate birthday,
-                     final String city,
-                     final String state) {
+    public ClientRequest(@FullName final String name,
+                         final String gender,
+                         @Past(message = "{client.validation.birthday.error}") final LocalDate birthday,
+                         final String city,
+                         final String state) {
         this.name = name;
         this.gender = gender;
         this.birthday = birthday;
         this.city = city;
         this.state = state;
-    }
-
-    /**
-     * Optional constructor, built from a {@link Client} object.
-     *
-     * @param client the {@link Client} object
-     */
-    public ClientDTO(final Client client) {
-        this.id = client.getId();
-        this.name = this.normalizeField(client.getFullName());
-        this.gender = client.getGender() != null ? this.normalizeField(client.getGender()) : null;
-        this.birthday = client.getBirthday();
-        if (client.getCity() != null) {
-            CityDTO city = new CityDTO(client.getCity().getName(), client.getCity().getState()).getNormalized();
-            this.city = city.getCity();
-            this.state = city.getState();
-        }
     }
 
     /**
@@ -96,23 +76,6 @@ public class ClientDTO extends GenericDTO {
             client.setCity(new City(this.city.toLowerCase(), this.state.toLowerCase()));
         }
         return client;
-    }
-
-    /**
-     * Calculate the age of the {@link ClientDTO} considering its birthdate.
-     *
-     * @return an int.
-     */
-    public int getAge() {
-        return Period.between(this.birthday, LocalDate.now()).getYears();
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -160,20 +123,18 @@ public class ClientDTO extends GenericDTO {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        final ClientDTO clientDTO = (ClientDTO) o;
+        final ClientRequest that = (ClientRequest) o;
 
-        if (!Objects.equals(id, clientDTO.id)) return false;
-        if (!name.equals(clientDTO.name)) return false;
-        if (!Objects.equals(gender, clientDTO.gender)) return false;
-        if (!birthday.equals(clientDTO.birthday)) return false;
-        if (!Objects.equals(city, clientDTO.city)) return false;
-        return Objects.equals(state, clientDTO.state);
+        if (!name.equals(that.name)) return false;
+        if (!Objects.equals(gender, that.gender)) return false;
+        if (!birthday.equals(that.birthday)) return false;
+        if (!Objects.equals(city, that.city)) return false;
+        return Objects.equals(state, that.state);
     }
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + name.hashCode();
+        int result = name.hashCode();
         result = 31 * result + (gender != null ? gender.hashCode() : 0);
         result = 31 * result + birthday.hashCode();
         result = 31 * result + (city != null ? city.hashCode() : 0);
@@ -183,11 +144,10 @@ public class ClientDTO extends GenericDTO {
 
     @Override
     public String toString() {
-        return "ClientDTO{" +
-                       "id=" + id +
-                       ", fullname='" + name + '\'' +
+        return "ClientRequest{" +
+                       "name='" + name + '\'' +
                        ", gender='" + gender + '\'' +
-                       ", birthday=" + birthday.toString() +
+                       ", birthday=" + birthday +
                        ", city='" + city + '\'' +
                        ", state='" + state + '\'' +
                        '}';

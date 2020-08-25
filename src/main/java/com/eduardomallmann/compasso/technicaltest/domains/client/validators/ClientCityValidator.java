@@ -1,6 +1,6 @@
 package com.eduardomallmann.compasso.technicaltest.domains.client.validators;
 
-import com.eduardomallmann.compasso.technicaltest.domains.client.ClientDTO;
+import com.eduardomallmann.compasso.technicaltest.domains.client.dto.ClientRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,12 +14,12 @@ import javax.validation.ConstraintValidatorContext;
  * @author eduardomallmann
  * @since 0.0.1
  */
-public class ClientCityValidator implements ConstraintValidator<ClientCityValidation, ClientDTO> {
+public class ClientCityValidator implements ConstraintValidator<ClientCityValidation, ClientRequest> {
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     /**
-     * Initializes the validator in preparation for {@link ClientCityValidator#isValid(ClientDTO, ConstraintValidatorContext)} calls. The constraint annotation for a
+     * Initializes the validator in preparation for {@link ClientCityValidator#isValid(ClientRequest, ConstraintValidatorContext)} calls. The constraint annotation for a
      * given constraint declaration is passed.
      * <p>
      * This method is guaranteed to be called before any use of this instance for validation.
@@ -43,7 +43,7 @@ public class ClientCityValidator implements ConstraintValidator<ClientCityValida
      * @return {@code false} if {@code value} does not pass the constraint
      */
     @Override
-    public boolean isValid(final ClientDTO value, final ConstraintValidatorContext context) {
+    public boolean isValid(final ClientRequest value, final ConstraintValidatorContext context) {
         final boolean hasCity = value.getCity() != null && !value.getCity().trim().isEmpty();
         final boolean hasState = value.getState() != null && !value.getState().trim().isEmpty();
         final boolean result = (!hasCity && !hasState) || (hasCity && hasState);

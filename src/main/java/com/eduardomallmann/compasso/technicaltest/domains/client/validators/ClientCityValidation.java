@@ -1,6 +1,6 @@
 package com.eduardomallmann.compasso.technicaltest.domains.client.validators;
 
-import com.eduardomallmann.compasso.technicaltest.domains.client.ClientDTO;
+import com.eduardomallmann.compasso.technicaltest.domains.client.dto.ClientResponse;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -11,7 +11,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation that validates the {@link ClientDTO} object for its city and state properties. Both must be fulfilled or blank together.
+ * Annotation that validates the {@link ClientResponse} object for its city and state properties. Both must be fulfilled or blank together.
  *
  * @author eduardomallmann
  * @since 0.0.1

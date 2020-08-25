@@ -1,5 +1,6 @@
-package com.eduardomallmann.compasso.technicaltest.domains.client;
+package com.eduardomallmann.compasso.technicaltest.domains.client.dto;
 
+import com.eduardomallmann.compasso.technicaltest.domains.client.Client;
 import com.eduardomallmann.compasso.technicaltest.domains.client.validators.FullName;
 import com.eduardomallmann.compasso.technicaltest.utils.GenericDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -15,7 +16,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(NON_EMPTY)
-public class ClientNameDTO extends GenericDTO {
+public class ClientNameRequest extends GenericDTO {
 
     @FullName
     private String name;
@@ -23,7 +24,7 @@ public class ClientNameDTO extends GenericDTO {
     /**
      * Main constructor, empty.
      */
-    public ClientNameDTO() {
+    public ClientNameRequest() {
     }
 
     /**
@@ -31,7 +32,7 @@ public class ClientNameDTO extends GenericDTO {
      *
      * @param name client full name param
      */
-    public ClientNameDTO(@FullName final String name) {
+    public ClientNameRequest(@FullName final String name) {
         this.name = name;
     }
 
@@ -48,7 +49,7 @@ public class ClientNameDTO extends GenericDTO {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        final ClientNameDTO that = (ClientNameDTO) o;
+        final ClientNameRequest that = (ClientNameRequest) o;
 
         return name.equals(that.name);
     }

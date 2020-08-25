@@ -1,5 +1,8 @@
 package com.eduardomallmann.compasso.technicaltest.domains.client;
 
+import com.eduardomallmann.compasso.technicaltest.domains.client.dto.ClientResponse;
+import com.eduardomallmann.compasso.technicaltest.domains.client.dto.ClientNameRequest;
+import com.eduardomallmann.compasso.technicaltest.domains.client.dto.ClientRequest;
 import com.eduardomallmann.compasso.technicaltest.utils.MessageUtils;
 import com.eduardomallmann.compasso.technicaltest.utils.Response;
 import com.eduardomallmann.compasso.technicaltest.utils.ResponseContent;
@@ -54,13 +57,13 @@ class ClientControllerIT {
     @Test
     void createClient_ShouldReturnClientCreated() {
         //given
-        ClientDTO clientRequest = new ClientDTO("Eduardo Mallmann", "Male", LocalDate.of(1982, 5, 22), "Florianópolis", "Santa Catarina");
+        ClientRequest clientRequest = new ClientRequest("Eduardo Mallmann", "Male", LocalDate.of(1982, 5, 22), "Florianópolis", "Santa Catarina");
         //when
-        ResponseEntity<Response<ClientDTO>> result = restTemplate.exchange(
+        ResponseEntity<Response<ClientResponse>> result = restTemplate.exchange(
                 RequestEntity.post(URI.create(CLIENT_ENDPOINT))
                         .contentType(MediaType.APPLICATION_JSON)
                         .body(clientRequest),
-                new ParameterizedTypeReference<Response<ClientDTO>>() {
+                new ParameterizedTypeReference<Response<ClientResponse>>() {
                 });
         //then
         assertEquals(HttpStatus.CREATED, result.getStatusCode());
@@ -77,15 +80,15 @@ class ClientControllerIT {
     @Test
     void createClient_WithMandatoryOnly_ShouldReturnClientCreated() {
         //given
-        ClientDTO clientRequest = new ClientDTO();
+        ClientRequest clientRequest = new ClientRequest();
         clientRequest.setName("Eduardo Mallmann");
         clientRequest.setBirthday(LocalDate.of(1982, 5, 22));
         //when
-        ResponseEntity<Response<ClientDTO>> result = restTemplate.exchange(
+        ResponseEntity<Response<ClientResponse>> result = restTemplate.exchange(
                 RequestEntity.post(URI.create(CLIENT_ENDPOINT))
                         .contentType(MediaType.APPLICATION_JSON)
                         .body(clientRequest),
-                new ParameterizedTypeReference<Response<ClientDTO>>() {
+                new ParameterizedTypeReference<Response<ClientResponse>>() {
                 });
         //then
         assertEquals(HttpStatus.CREATED, result.getStatusCode());
@@ -99,7 +102,7 @@ class ClientControllerIT {
     @Test
     void createClient_ShouldReturnFullnameValidationError() {
         //given
-        ClientDTO clientRequest = new ClientDTO();
+        ClientRequest clientRequest = new ClientRequest();
         clientRequest.setName("Eduardo");
         clientRequest.setBirthday(LocalDate.of(1982, 5, 22));
         String errorMessage = MessageUtils.getMessage("client.validation.full-name.error");
@@ -119,7 +122,7 @@ class ClientControllerIT {
     @Test
     void createClient_ShouldReturnPastValidationError() {
         //given
-        ClientDTO clientRequest = new ClientDTO();
+        ClientRequest clientRequest = new ClientRequest();
         clientRequest.setName("Eduardo Mallmann");
         clientRequest.setBirthday(LocalDate.of(2082, 5, 22));
         String errorMessage = MessageUtils.getMessage("client.validation.birthday.error");
@@ -139,30 +142,11 @@ class ClientControllerIT {
     @Test
     void createClient_ShouldReturnCityValidationError() {
         //given
-        ClientDTO clientRequest = new ClientDTO();
+        ClientRequest clientRequest = new ClientRequest();
         clientRequest.setName("Eduardo Mallmann");
         clientRequest.setBirthday(LocalDate.of(1982, 5, 22));
         clientRequest.setCity("Florianópolis");
         String errorMessage = MessageUtils.getMessage("client.city.validation.error");
-        //when
-        ResponseEntity<Response<ResponseContent>> result = restTemplate.exchange(
-                RequestEntity.post(URI.create(CLIENT_ENDPOINT))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .body(clientRequest),
-                new ParameterizedTypeReference<Response<ResponseContent>>() {
-                });
-        //then
-        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
-        assertTrue(Objects.requireNonNull(Objects.requireNonNull(result.getBody()).getContent()).stream()
-                           .allMatch(resp -> errorMessage.equals(resp.getErrorMessage().getMessage())));
-    }
-
-    @Test
-    void createClient_ShouldReturnNewSaveError() {
-        //given
-        ClientDTO clientRequest = new ClientDTO("Eduardo Mallmann", "Male", LocalDate.of(1982, 5, 22), "Florianópolis", "Santa Catarina");
-        clientRequest.setId(1L);
-        String errorMessage = MessageUtils.getMessage("client.save.new.error");
         //when
         ResponseEntity<Response<ResponseContent>> result = restTemplate.exchange(
                 RequestEntity.post(URI.create(CLIENT_ENDPOINT))
@@ -214,15 +198,15 @@ class ClientControllerIT {
     @Test
     void updateClientName_ShouldReturnClientWithNewName() {
         //given
-        final ClientNameDTO clientNameRequest = new ClientNameDTO("Jing Dong");
+        final ClientNameRequest clientNameRequest = new ClientNameRequest("Jing Dong");
         List<Client> clients = this.populateClients();
-        ClientDTO client = new ClientDTO(clients.get(0));
+        ClientResponse client = new ClientResponse(clients.get(0));
         //when
-        ResponseEntity<Response<ClientDTO>> result = restTemplate.exchange(
+        ResponseEntity<Response<ClientResponse>> result = restTemplate.exchange(
                 RequestEntity.patch(URI.create(CLIENT_ENDPOINT.concat("/").concat(String.valueOf(client.getId()))))
                         .contentType(MediaType.APPLICATION_JSON)
                         .body(clientNameRequest),
-                new ParameterizedTypeReference<Response<ClientDTO>>() {
+                new ParameterizedTypeReference<Response<ClientResponse>>() {
                 });
         //Then
         assertEquals(HttpStatus.OK, result.getStatusCode());
@@ -234,7 +218,7 @@ class ClientControllerIT {
     @Test
     void updateClientName_ShouldReturnBusinessError() {
         //given
-        final ClientNameDTO clientNameRequest = new ClientNameDTO("Jing Dong");
+        final ClientNameRequest clientNameRequest = new ClientNameRequest("Jing Dong");
         Long id = 1L;
         String errorMessage = MessageUtils.getMessage("client.update.response.error");
         //when
@@ -256,11 +240,11 @@ class ClientControllerIT {
         final String name = "Doe";
         List<Client> clients = this.populateClients().stream().filter(client -> client.getFullName().contains(name.toLowerCase())).collect(Collectors.toList());
         //when
-        ResponseEntity<Response<ClientDTO>> result = restTemplate.exchange(
+        ResponseEntity<Response<ClientResponse>> result = restTemplate.exchange(
                 RequestEntity.get(URI.create(CLIENT_ENDPOINT.concat("?name=").concat(URLEncoder.encode(name, "UTF-8"))))
                         .accept(MediaType.APPLICATION_JSON)
                         .build(),
-                new ParameterizedTypeReference<Response<ClientDTO>>() {
+                new ParameterizedTypeReference<Response<ClientResponse>>() {
                 });
         //then
         assertEquals(HttpStatus.OK, result.getStatusCode());
@@ -273,18 +257,18 @@ class ClientControllerIT {
     void getClientById_ShouldReturnTheClientWithTheSameId() {
         //given
         List<Client> clients = this.populateClients();
-        ClientDTO clientDTO = new ClientDTO(clients.get(0));
+        ClientResponse clientResponse = new ClientResponse(clients.get(0));
         //when
-        ResponseEntity<Response<ClientDTO>> result = restTemplate.exchange(
-                RequestEntity.get(URI.create(CLIENT_ENDPOINT.concat("/").concat(String.valueOf(clientDTO.getId()))))
+        ResponseEntity<Response<ClientResponse>> result = restTemplate.exchange(
+                RequestEntity.get(URI.create(CLIENT_ENDPOINT.concat("/").concat(String.valueOf(clientResponse.getId()))))
                         .accept(MediaType.APPLICATION_JSON)
                         .build(),
-                new ParameterizedTypeReference<Response<ClientDTO>>() {
+                new ParameterizedTypeReference<Response<ClientResponse>>() {
                 });
         //then
         assertEquals(HttpStatus.OK, result.getStatusCode());
         assertTrue(Objects.requireNonNull(result.getBody()).getContent().stream()
-                           .allMatch(client -> client.equals(clientDTO)));
+                           .allMatch(client -> client.equals(clientResponse)));
     }
 
     @Test
@@ -306,11 +290,11 @@ class ClientControllerIT {
     }
 
     private List<Client> populateClients() {
-        ClientDTO john = new ClientDTO("John Doe", "male", LocalDate.of(1920, 10, 11), null, null);
-        ClientDTO jane = new ClientDTO("Jane Doe", "female", LocalDate.of(1925, 5, 6), null, null);
-        ClientDTO mary = new ClientDTO("Mary Jane", "female", LocalDate.of(1973, 9, 23), null, null);
-        ClientDTO coke = new ClientDTO("Coke Cola", "male", LocalDate.of(1840, 7, 15), null, null);
-        List<Client> clients = Stream.of(john, jane, mary, coke).map(ClientDTO::getClient).collect(Collectors.toList());
+        ClientRequest john = new ClientRequest("John Doe", "male", LocalDate.of(1920, 10, 11), null, null);
+        ClientRequest jane = new ClientRequest("Jane Doe", "female", LocalDate.of(1925, 5, 6), null, null);
+        ClientRequest mary = new ClientRequest("Mary Jane", "female", LocalDate.of(1973, 9, 23), null, null);
+        ClientRequest coke = new ClientRequest("Coke Cola", "male", LocalDate.of(1840, 7, 15), null, null);
+        List<Client> clients = Stream.of(john, jane, mary, coke).map(ClientRequest::getClient).collect(Collectors.toList());
         this.clientRepository.saveAll(clients);
         return this.clientRepository.findAll();
     }

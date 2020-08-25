@@ -3,6 +3,8 @@ package com.eduardomallmann.compasso.technicaltest.domains.client;
 import com.eduardomallmann.compasso.technicaltest.domains.city.City;
 import com.eduardomallmann.compasso.technicaltest.domains.city.CityDTO;
 import com.eduardomallmann.compasso.technicaltest.domains.city.CityRepository;
+import com.eduardomallmann.compasso.technicaltest.domains.client.dto.ClientResponse;
+import com.eduardomallmann.compasso.technicaltest.domains.client.dto.ClientRequest;
 import com.eduardomallmann.compasso.technicaltest.exceptions.BusinessException;
 import com.eduardomallmann.compasso.technicaltest.utils.Response;
 import org.slf4j.Logger;
@@ -45,19 +47,15 @@ public class ClientService {
      * Save a new {@link Client} object. It verifies if the {@link City} already exists and uses the existent one, otherwise creates a new {@link City} object.
      * <p>It also normalizes the</p>
      *
-     * @param clientRequest a {@link ClientDTO} object with the object creation request
+     * @param clientRequest a {@link ClientResponse} object with the object creation request
      *
-     * @return an asynchronous response with {@link ClientDTO} object encapsulated in a {@link Response} object.
+     * @return an asynchronous response with {@link ClientResponse} object encapsulated in a {@link Response} object.
      *
      * @throws BusinessException in case of the application throws any kind of exception.
      */
     @Async
-    public CompletableFuture<Response<ClientDTO>> save(final ClientDTO clientRequest) throws BusinessException {
+    public CompletableFuture<Response<ClientResponse>> save(final ClientRequest clientRequest) throws BusinessException {
         try {
-            if (clientRequest.getId() != null) {
-                log.error("Client creation attempt failed due existent id in the request: {}", clientRequest.toJson());
-                throw new BusinessException("client.save.new.error");
-            }
             Client client = clientRequest.getClient();
             final boolean hasCity = client.getCity() != null;
             if (hasCity) {
@@ -70,7 +68,7 @@ public class ClientService {
                 }
             }
             this.clientRepository.save(client);
-            ClientDTO result = new ClientDTO(client);
+            ClientResponse result = new ClientResponse(client);
             log.debug("Client created: {}", result.toJson());
             return CompletableFuture.completedFuture(Response.of(result));
         } catch (Exception e) {
@@ -82,26 +80,26 @@ public class ClientService {
     }
 
     /**
-     * Retrieves all {@link Client} objects encapsulated into a {@link ClientDTO} object, that matches the similar name passed as parameter.
+     * Retrieves all {@link Client} objects encapsulated into a {@link ClientResponse} object, that matches the similar name passed as parameter.
      *
      * @param clientName partial or full name of the client
      *
-     * @return an asynchronous response with {@link ClientDTO} objects encapsulated in a {@link Response} object.
+     * @return an asynchronous response with {@link ClientResponse} objects encapsulated in a {@link Response} object.
      *
      * @throws BusinessException in case of the application throws any kind of exception.
      */
     @Async
-    public CompletableFuture<Response<ClientDTO>> findAllByFullNameLike(final String clientName) throws BusinessException {
+    public CompletableFuture<Response<ClientResponse>> findAllByFullNameLike(final String clientName) throws BusinessException {
         try {
             final String[] fullName = clientName.split("\\s");
-            List<ClientDTO> clients = new ArrayList<>();
+            List<ClientResponse> clients = new ArrayList<>();
             for (String name : fullName) {
                 final String clientNameLike = "%".concat(name.toLowerCase()).concat("%");
                 clients.addAll(this.clientRepository.findAllByFullNameLike(clientNameLike).stream()
-                                       .map(ClientDTO::new)
+                                       .map(ClientResponse::new)
                                        .collect(Collectors.toList()));
             }
-            List<ClientDTO> result = clients.stream().distinct().collect(Collectors.toList());
+            List<ClientResponse> result = clients.stream().distinct().collect(Collectors.toList());
             log.debug("Total of clients found by name {}: {}", clientName, result.size());
             return CompletableFuture.completedFuture(Response.of(result));
         } catch (Exception e) {
@@ -111,20 +109,20 @@ public class ClientService {
     }
 
     /**
-     * Retrieves a {@link Client} object encapsulated into a {@link ClientDTO} object, that matches the identifier.
+     * Retrieves a {@link Client} object encapsulated into a {@link ClientResponse} object, that matches the identifier.
      *
      * @param id {@link Client} database identifier
      *
-     * @return an asynchronous response with {@link ClientDTO} object encapsulated in a {@link Response} object.
+     * @return an asynchronous response with {@link ClientResponse} object encapsulated in a {@link Response} object.
      *
      * @throws BusinessException in case of the application throws any kind of exception.
      */
     @Async
-    public CompletableFuture<Response<ClientDTO>> findClientById(final Long id) throws BusinessException {
+    public CompletableFuture<Response<ClientResponse>> findClientById(final Long id) throws BusinessException {
         try {
             Optional<Client> client = this.clientRepository.findById(id);
             if (client.isPresent()) {
-                ClientDTO result = new ClientDTO(client.get());
+                ClientResponse result = new ClientResponse(client.get());
                 log.debug("Client found for id {}: {}", id, result.toJson());
                 return CompletableFuture.completedFuture(Response.of(result));
             } else {
@@ -144,18 +142,18 @@ public class ClientService {
      * @param id         id {@link Client} database identifier
      * @param clientName new {@link Client} fullname property
      *
-     * @return an asynchronous response with {@link ClientDTO} object encapsulated in a {@link Response} object.
+     * @return an asynchronous response with {@link ClientResponse} object encapsulated in a {@link Response} object.
      *
      * @throws BusinessException in case of the application throws any kind of exception.
      */
     @Async
     @Transactional
-    public CompletableFuture<Response<ClientDTO>> updateClientName(final Long id, final String clientName) throws BusinessException {
+    public CompletableFuture<Response<ClientResponse>> updateClientName(final Long id, final String clientName) throws BusinessException {
         try {
             this.clientRepository.updateClientFullName(id, clientName.toLowerCase());
             Optional<Client> client = this.clientRepository.findById(id);
             if (client.isPresent()) {
-                ClientDTO result = new ClientDTO(client.get());
+                ClientResponse result = new ClientResponse(client.get());
                 log.debug("Client name updated for id {}: {}", id, result.toJson());
                 return CompletableFuture.completedFuture(Response.of(result));
             } else {
