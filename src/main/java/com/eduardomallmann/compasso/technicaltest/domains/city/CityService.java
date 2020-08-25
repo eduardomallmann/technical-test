@@ -56,7 +56,7 @@ public class CityService {
             return CompletableFuture.completedFuture(Response.of(result));
         } catch (Exception e) {
             log.error("Error on creating a new city: {} ", cityRequest.getNormalized().toJson());
-            log.error("Exception catched: {}", e.getMessage());
+            log.error("Exception caught: {}", e.getMessage());
             throw new BusinessException("city.save.error", e.getMessage());
         }
     }

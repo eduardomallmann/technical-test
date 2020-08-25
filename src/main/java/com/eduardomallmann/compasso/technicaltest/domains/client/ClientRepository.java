@@ -28,10 +28,10 @@ public interface ClientRepository extends JpaRepository<Client, Long> {
     List<Client> findAllByFullNameLike(final String name);
 
     /**
-     * Updates the {@link Client} register fullname property, identified by its id.
+     * Updates the {@link Client} register fullName property, identified by its id.
      *
      * @param id   {@link Client} register database identification
-     * @param name value to be placed in {@link Client} fullname property.
+     * @param name value to be placed in {@link Client} fullName property.
      */
     @Modifying
     @Query("update Client c set c.fullName = :name where c.id = :id")

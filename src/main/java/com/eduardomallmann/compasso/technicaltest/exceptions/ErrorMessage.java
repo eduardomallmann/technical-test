@@ -26,19 +26,6 @@ public class ErrorMessage {
     }
 
     /**
-     * Optional constructor with all fields.
-     *
-     * @param status  error status code
-     * @param message key message for error
-     * @param errors  list of related errors
-     */
-    public ErrorMessage(final int status, final String message, final List<String> errors) {
-        this.status = status;
-        this.message = MessageUtils.getMessage(message);
-        this.errors = errors;
-    }
-
-    /**
      * ErrorMessage builder instantiation.
      *
      * @return {@link ErrorMessageBuilder} object.

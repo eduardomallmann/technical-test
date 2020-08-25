@@ -19,13 +19,13 @@ import org.springframework.test.context.ActiveProfiles;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
@@ -113,7 +113,7 @@ class CityControllerIT {
                                        .collect(Collectors.toList());
         //when
         ResponseEntity<Response<CityDTO>> result = restTemplate.exchange(
-                RequestEntity.get(URI.create(CITY_ENDPOINT.concat("?name=").concat(URLEncoder.encode(name, "UTF-8"))))
+                RequestEntity.get(URI.create(CITY_ENDPOINT.concat("/name?value=").concat(URLEncoder.encode(name, "UTF-8"))))
                         .accept(MediaType.APPLICATION_JSON)
                         .build(),
                 new ParameterizedTypeReference<Response<CityDTO>>() {
@@ -135,7 +135,7 @@ class CityControllerIT {
                                        .collect(Collectors.toList());
         //when
         ResponseEntity<Response<CityDTO>> result = restTemplate.exchange(
-                RequestEntity.get(URI.create(CITY_ENDPOINT.concat("?state=").concat(URLEncoder.encode(state, "UTF-8"))))
+                RequestEntity.get(URI.create(CITY_ENDPOINT.concat("/state?value=").concat(URLEncoder.encode(state, "UTF-8"))))
                         .accept(MediaType.APPLICATION_JSON)
                         .build(),
                 new ParameterizedTypeReference<Response<CityDTO>>() {

@@ -2,6 +2,8 @@ package com.eduardomallmann.compasso.technicaltest.utils;
 
 import com.eduardomallmann.compasso.technicaltest.exceptions.ErrorMessage;
 
+import java.util.Objects;
+
 /**
  * Class responsible to encapsulate the content of empty body and errors.
  *
@@ -47,7 +49,7 @@ public class ResponseContent {
      */
     public static class ResponseContentBuilder {
 
-        private Builder<ResponseContent> builder;
+        private final Builder<ResponseContent> builder;
 
         /**
          * Main constructor.
@@ -114,7 +116,7 @@ public class ResponseContent {
         final ResponseContent content = (ResponseContent) o;
 
         if (!status.equals(content.status)) return false;
-        return errorMessage != null ? errorMessage.equals(content.errorMessage) : content.errorMessage == null;
+        return Objects.equals(errorMessage, content.errorMessage);
     }
 
     @Override

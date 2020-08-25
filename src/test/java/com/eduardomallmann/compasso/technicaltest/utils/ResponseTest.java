@@ -24,28 +24,29 @@ class ResponseTest {
     private ResponseContent responseContent2;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         //given
         this.responseContent1 = ResponseContent.builder().status(HttpStatus.BAD_REQUEST.toString()).errorMessage(new ErrorMessage()).build();
         this.responseContent2 = ResponseContent.builder().status(HttpStatus.INTERNAL_SERVER_ERROR.toString()).errorMessage(new ErrorMessage()).build();
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void builder_ShouldCreateAnInstanceWithBuilder() {
         //given
         List<ResponseContent> responseContentList = Arrays.asList(responseContent1, responseContent2);
         //when
-        Response response = Response.builder()
-                                    .content(responseContentList)
-                                    .numberOfElements(responseContentList.size())
-                                    .pageNumber(0)
-                                    .pageSize(responseContentList.size())
-                                    .totalElements(responseContentList.size())
-                                    .totalPages(1)
-                                    .first(true)
-                                    .last(true)
-                                    .empty(false)
-                                    .build();
+        Response<ResponseContent> response = Response.builder()
+                                                     .content(responseContentList)
+                                                     .numberOfElements(responseContentList.size())
+                                                     .pageNumber(0)
+                                                     .pageSize(responseContentList.size())
+                                                     .totalElements(responseContentList.size())
+                                                     .totalPages(1)
+                                                     .first(true)
+                                                     .last(true)
+                                                     .empty(false)
+                                                     .build();
         //then
         assertNotNull(response);
         assertFalse(response.getContent().isEmpty());
@@ -62,19 +63,20 @@ class ResponseTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void builder_ShouldCreateAnInstanceWithBuilderAndOneObjectToContent() {
         //when
-        Response response = Response.builder()
-                                    .content(this.responseContent1)
-                                    .numberOfElements(1)
-                                    .pageNumber(0)
-                                    .pageSize(1)
-                                    .totalElements(1)
-                                    .totalPages(1)
-                                    .first(true)
-                                    .last(true)
-                                    .empty(false)
-                                    .build();
+        Response<ResponseContent> response = Response.builder()
+                                                     .content(this.responseContent1)
+                                                     .numberOfElements(1)
+                                                     .pageNumber(0)
+                                                     .pageSize(1)
+                                                     .totalElements(1)
+                                                     .totalPages(1)
+                                                     .first(true)
+                                                     .last(true)
+                                                     .empty(false)
+                                                     .build();
         //then
         assertNotNull(response);
         assertFalse(response.getContent().isEmpty());

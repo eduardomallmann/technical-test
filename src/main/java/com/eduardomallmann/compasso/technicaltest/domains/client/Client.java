@@ -73,8 +73,8 @@ public class Client implements Serializable {
         return fullName;
     }
 
-    public void setFullName(final String fullname) {
-        this.fullName = fullname;
+    public void setFullName(final String fullName) {
+        this.fullName = fullName;
     }
 
     public String getGender() {
@@ -129,7 +129,7 @@ public class Client implements Serializable {
     public String toString() {
         return "Client{" +
                        "id=" + id +
-                       ", fullname='" + fullName + '\'' +
+                       ", fullName='" + fullName + '\'' +
                        ", gender='" + gender + '\'' +
                        ", birthday=" + birthday.toString() +
                        ", city=" + city.toString() +

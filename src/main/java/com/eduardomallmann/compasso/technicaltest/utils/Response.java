@@ -14,7 +14,6 @@ import java.util.List;
  */
 public class Response<T> {
 
-
     private List<T> content;
     private long numberOfElements;
     private long pageSize;
@@ -32,12 +31,13 @@ public class Response<T> {
     }
 
     /**
-     * Instantiates the {@link ResponseBuider}.
+     * Instantiates the {@link ResponseBuilder}.
      *
-     * @return a new instance of {@link ResponseBuider}.
+     * @return a new instance of {@link ResponseBuilder}.
      */
-    public static ResponseBuider builder() {
-        return new ResponseBuider(Builder.create(Response.class));
+    @SuppressWarnings("unchecked")
+    public static ResponseBuilder builder() {
+        return new ResponseBuilder(Builder.create(Response.class));
     }
 
     /**
@@ -103,20 +103,20 @@ public class Response<T> {
                        .build();
     }
 
-    public static class ResponseBuider<T> {
+    public static class ResponseBuilder<T> {
 
         public Builder<Response<T>> builder;
 
-        public ResponseBuider(final Builder<Response<T>> builder) {
+        public ResponseBuilder(final Builder<Response<T>> builder) {
             this.builder = builder;
         }
 
-        public ResponseBuider content(final List<T> content) {
+        public ResponseBuilder<T> content(final List<T> content) {
             this.builder.with(r -> r.content = content);
             return this;
         }
 
-        public ResponseBuider content(final T content) {
+        public ResponseBuilder<T> content(final T content) {
             this.builder.with(r -> {
                 if (r.content == null) {
                     r.content = new ArrayList<>();
@@ -126,42 +126,42 @@ public class Response<T> {
             return this;
         }
 
-        public ResponseBuider numberOfElements(final long numberOfElements) {
+        public ResponseBuilder<T> numberOfElements(final long numberOfElements) {
             this.builder.with(r -> r.numberOfElements = numberOfElements);
             return this;
         }
 
-        public ResponseBuider pageSize(final long pageSize) {
+        public ResponseBuilder<T> pageSize(final long pageSize) {
             this.builder.with(r -> r.pageSize = pageSize);
             return this;
         }
 
-        public ResponseBuider pageNumber(final long pageNumber) {
+        public ResponseBuilder<T> pageNumber(final long pageNumber) {
             this.builder.with(r -> r.pageNumber = pageNumber);
             return this;
         }
 
-        public ResponseBuider totalPages(final long totalPages) {
+        public ResponseBuilder<T> totalPages(final long totalPages) {
             this.builder.with(r -> r.totalPages = totalPages);
             return this;
         }
 
-        public ResponseBuider totalElements(final long totalElements) {
+        public ResponseBuilder<T> totalElements(final long totalElements) {
             this.builder.with(r -> r.totalElements = totalElements);
             return this;
         }
 
-        public ResponseBuider first(final boolean first) {
+        public ResponseBuilder<T> first(final boolean first) {
             this.builder.with(r -> r.first = first);
             return this;
         }
 
-        public ResponseBuider last(final boolean last) {
+        public ResponseBuilder<T> last(final boolean last) {
             this.builder.with(r -> r.last = last);
             return this;
         }
 
-        public ResponseBuider empty(final boolean empty) {
+        public ResponseBuilder<T> empty(final boolean empty) {
             this.builder.with(r -> r.empty = empty);
             return this;
         }

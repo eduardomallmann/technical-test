@@ -37,7 +37,7 @@ public class Builder<T> {
             if (null == objects) {
                 constructor = constructors.filter(cons -> cons.getParameterCount() == 0).findFirst();
                 if (constructor.isPresent()) {
-                    instance = (T) constructor.get().newInstance();
+                    instance = clazz.cast(constructor.get().newInstance());
                 }
             } else {
                 constructor = constructors.filter(cons -> cons.getParameterCount() == objects.length)
@@ -57,7 +57,7 @@ public class Builder<T> {
                                       })
                                       .findFirst();
                 if (constructor.isPresent()) {
-                    instance = (T) constructor.get().newInstance(objects);
+                    instance = clazz.cast(constructor.get().newInstance(objects));
                 }
             }
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
@@ -91,7 +91,7 @@ public class Builder<T> {
     }
 
     /**
-     * Set a value into a paramater of the instance.
+     * Set a value into a parameter of the instance.
      *
      * @param setter Consumer to insert the value
      *
@@ -113,7 +113,7 @@ public class Builder<T> {
     /**
      * Creates a flux control to insert the value of the parameters.
      *
-     * @param condition Condition to be analized
+     * @param condition Condition to be analyzed
      *
      * @return the current builder.
      */

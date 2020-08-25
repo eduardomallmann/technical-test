@@ -30,6 +30,12 @@ public class ClientResponse extends GenericDTO {
     private String state;
 
     /**
+     * Main constructor, empty.
+     */
+    public ClientResponse() {
+    }
+
+    /**
      * Optional constructor, built from a {@link Client} object.
      *
      * @param client the {@link Client} object
@@ -131,11 +137,11 @@ public class ClientResponse extends GenericDTO {
 
     @Override
     public String toString() {
-        return "ClientDTO{" +
+        return "ClientResponse{" +
                        "id=" + id +
-                       ", fullname='" + name + '\'' +
+                       ", name='" + name + '\'' +
                        ", gender='" + gender + '\'' +
-                       ", birthday=" + birthday.toString() +
+                       ", birthday=" + birthday +
                        ", city='" + city + '\'' +
                        ", state='" + state + '\'' +
                        '}';

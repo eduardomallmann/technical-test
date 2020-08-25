@@ -72,9 +72,8 @@ public class ClientService {
             log.debug("Client created: {}", result.toJson());
             return CompletableFuture.completedFuture(Response.of(result));
         } catch (Exception e) {
-            if (e instanceof BusinessException) throw e;
             log.error("Error on creating a new client: {} ", clientRequest.toJson());
-            log.error("Exception catched: {}", e.getMessage());
+            log.error("Exception caught: {}", e.getMessage());
             throw new BusinessException("client.save.error", e.getMessage());
         }
     }
@@ -137,10 +136,10 @@ public class ClientService {
     }
 
     /**
-     * Updates the {@link Client} fullname property.
+     * Updates the {@link Client} fullName property.
      *
      * @param id         id {@link Client} database identifier
-     * @param clientName new {@link Client} fullname property
+     * @param clientName new {@link Client} fullName property
      *
      * @return an asynchronous response with {@link ClientResponse} object encapsulated in a {@link Response} object.
      *
