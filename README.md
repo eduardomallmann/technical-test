@@ -41,8 +41,8 @@ To run the application from its public docker image simply run the code below:
 ```
 $ docker run -p 8080:8080 eduardomallmann/technical-test:0.0.1
 ```
-### Documentation
+### API Documentation
 To see the API documentation, please run the application and access the address below in the browser:
 * http://localhost:8080/swagger-ui.html  
 The browser should load an website like the image below:
-
+![Image of Swagger](https://github.com/eduardomallmann/technical-test/blob/master/compasso-swagger.png?raw=true)
