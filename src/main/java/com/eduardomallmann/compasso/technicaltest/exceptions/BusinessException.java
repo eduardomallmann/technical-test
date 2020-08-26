@@ -10,6 +10,8 @@ import com.eduardomallmann.compasso.technicaltest.utils.MessageUtils;
  */
 public class BusinessException extends Exception {
 
+    private static final long serialVersionUID = 3757539297188282975L;
+
     private final ErrorMessage errorMessage;
 
     /**

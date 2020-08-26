@@ -1,7 +1,8 @@
 FROM adoptopenjdk:11-jdk-hotspot as builder
 WORKDIR /app
-ADD ./target/technical-test.jar service.jar
-RUN jar -xf service.jar
+ADD . .
+RUN ./mvnw clean package
+RUN jar -xf target/technical-test.jar
 
 FROM adoptopenjdk:11-jre-hotspot
 WORKDIR app
